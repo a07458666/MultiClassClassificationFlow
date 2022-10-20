@@ -7,30 +7,30 @@ import copy
 from torch.utils.data import Dataset
 from torchvision import transforms
 
-def get_metadata(dataset_name):
+def get_metadata(dataset_name, dataset_path):
     if dataset_name == 'pascal':
         meta = {
             'num_classes': 20,
-            'path_to_dataset': 'data/pascal',
-            'path_to_images': 'data/pascal/VOCdevkit/VOC2012/JPEGImages'
+            'path_to_dataset': os.path.join(dataset_path, 'pascal'),
+            'path_to_images': os.path.join(dataset_path, 'pascal/VOCdevkit/VOC2012/JPEGImages'),
         }
     elif dataset_name == 'coco':
         meta = {
             'num_classes': 80,
-            'path_to_dataset': 'data/coco',
-            'path_to_images': 'data/coco'
+            'path_to_dataset': os.path.join(dataset_path, 'coco'),
+            'path_to_images':  os.path.join(dataset_path, 'coco'),
         }
     elif dataset_name == 'nuswide':
         meta = {
             'num_classes': 81,
-            'path_to_dataset': 'data/nuswide',
-            'path_to_images': 'data/nuswide/Flickr'
+            'path_to_dataset': os.path.join(dataset_path, 'nuswide'),
+            'path_to_images': os.path.join(dataset_path, 'nuswide/Flickr'),
         }
     elif dataset_name == 'cub':
         meta = {
             'num_classes': 312,
-            'path_to_dataset': 'data/cub',
-            'path_to_images': 'data/cub/CUB_200_2011/images'
+            'path_to_dataset': os.path.join(dataset_path, 'cub'),
+            'path_to_images': os.path.join(dataset_path, 'cub/CUB_200_2011/images'),
         }
     else:
         raise NotImplementedError('Metadata dictionary not implemented.')
@@ -147,7 +147,7 @@ class multilabel:
     def __init__(self, P, tx):
         
         # get dataset metadata:
-        meta = get_metadata(P['dataset'])
+        meta = get_metadata(P['dataset'], P['dataset_path'])
         self.base_path = meta['path_to_dataset']
         
         # load data:
@@ -172,6 +172,7 @@ class multilabel:
         # define train set:
         self.train = ds_multilabel(
             P['dataset'],
+            P['dataset_path'],
             source_data['train']['images'][split_idx['train']],
             source_data['train']['labels'][split_idx['train'], :],
             source_data['train']['labels_obs'][split_idx['train'], :],
@@ -183,6 +184,7 @@ class multilabel:
         # define val set:
         self.val = ds_multilabel(
             P['dataset'],
+            P['dataset_path'],
             source_data['train']['images'][split_idx['val']],
             source_data['train']['labels'][split_idx['val'], :],
             source_data['train']['labels_obs'][split_idx['val'], :],
@@ -194,6 +196,7 @@ class multilabel:
         # define test set:
         self.test = ds_multilabel(
             P['dataset'],
+            P['dataset_path'],
             source_data['val']['images'],
             source_data['val']['labels'],
             source_data['val']['labels_obs'],
@@ -210,8 +213,8 @@ class multilabel:
 
 class ds_multilabel(Dataset):
 
-    def __init__(self, dataset_name, image_ids, label_matrix, label_matrix_obs, feats, tx, use_feats):
-        meta = get_metadata(dataset_name)
+    def __init__(self, dataset_name, dataset_path, image_ids, label_matrix, label_matrix_obs, feats, tx, use_feats):
+        meta = get_metadata(dataset_name, dataset_path)
         self.num_classes = meta['num_classes']
         self.path_to_images = meta['path_to_images']
         

@@ -47,10 +47,11 @@ class ImageClassifier(torch.nn.Module):
         x = self.linear_classifier(x)
         return x
         
-    def forward(self, x):
+    def forward(self, x, get_feature = False):
 
         feats = self.feature_extractor(x)
         pooled_feats = self.avgpool(feats)
         logits = self.linear_classifier(pooled_feats)
-    
+        if get_feature:
+            return logits, pooled_feats
         return logits

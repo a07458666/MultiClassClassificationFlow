@@ -9,6 +9,8 @@ import datetime
 import os
 from tqdm import tqdm
 
+from logger import *
+
 def run_train(P):
 
     dataset = datasets.get_data(P)
@@ -81,7 +83,6 @@ def run_train(P):
 
                         if P['mod_scheme'] is 'LL-Cp' and correction_idx is not None:
                             dataset[phase].label_matrix_obs[idx[correction_idx[0].cpu()], correction_idx[1].cpu()] = 1.0
-
                     else:
                         preds_np = preds.cpu().numpy()
                         this_batch_size = preds_np.shape[0]
@@ -97,6 +98,7 @@ def run_train(P):
         P['clean_rate'] -= P['delta_rel']
                 
         print(f"Epoch {epoch} : val mAP {map_val:.3f}")
+        log_mAP(phase, epoch, map_val)
         if bestmap_val < map_val:
             bestmap_val = map_val
             bestmap_epoch = epoch
@@ -144,7 +146,7 @@ def run_train(P):
 
     metrics = compute_metrics(y_pred, y_true)
     map_test = metrics['map']
-
+    log_mAP(phase, epoch, map_test)
     print('Training procedure completed!')
     print(f'Test mAP : {map_test:.3f} when trained until epoch {bestmap_epoch}')
     

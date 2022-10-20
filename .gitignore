@@ -134,3 +134,5 @@ data/coco/
 data/pascal/
 data/nuswide/
 data/cub/
+
+wandb/

@@ -3,7 +3,8 @@ import os
 import argparse
 
 pp = argparse.ArgumentParser(description='')
-pp.add_argument('--dataset', type=str, choices=['pascal', 'coco', 'nuswide', 'cub'], required=True)
+pp.add_argument('--dataset-path', type=str, default='../data/', help='Path to output directory.')
+# pp.add_argument('--dataset', type=str, choices=['pascal', 'coco', 'nuswide', 'cub'], required=True)
 pp.add_argument('--num-pos', type=int, default=1, required=False, help='number of positive labels per image')
 pp.add_argument('--num-neg', type=int, default=0, required=False, help='number of negative labels per image')
 pp.add_argument('--seed', type=int, default=1200, required=False, help='random seed')
@@ -61,7 +62,7 @@ def observe_uniform(label_matrix, num_pos, num_neg, rng):
     
     return label_matrix_obs
 
-base_path = os.path.join('../data/{}'.format(args.dataset))
+base_path = os.path.join('{}'.format(args.dataset_path))
 
 for phase in ['train', 'val']:
     # load ground truth binary label matrix:

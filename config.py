@@ -6,6 +6,7 @@ from os.path import join as ospj
 
 
 _DATASET = ('pascal', 'coco', 'nuswide', 'cub')
+_DATASET_PATH = '/data'
 _TRAIN_SET_VARIANT = ('observed', 'clean')
 _OPTIMIZER = ('adam', 'sgd')
 _SCHEMES = ('LL-R', 'LL-Ct', 'LL-Cp')
@@ -87,19 +88,31 @@ def get_configs():
     parser.add_argument('--dataset', type=str, required=True,
                         choices=_DATASET)
 
+    parser.add_argument('--dataset_path', type=str,  default=_DATASET_PATH)
+
     # Hyperparameters
     parser.add_argument('--optimizer', type=str, default='adam',
                         choices=_OPTIMIZER)
     parser.add_argument('--bsize', type=int, default=16)
+    parser.add_argument('--lr_f', type=float, default=1e-5)
     parser.add_argument('--lr', type=float, default=1e-5)
     parser.add_argument('--lr_mult', type=float, default=10)
     parser.add_argument('--mod_scheme', type=str, required=True, 
                         choices=_SCHEMES)
     parser.add_argument('--delta_rel', type=float, required=True)
     
+    # Flow
+    parser.add_argument('--flow', action='store_true', help = 'train with flow net')
+
+    # EMA
+    parser.add_argument('--decay', type=float, default=0.995, help = 'EMA decay')
+
     args = parser.parse_args()
     args = set_follow_up_configs(args)
     args = mch(**vars(args))
+    
+    
+    
 
     return args
 
